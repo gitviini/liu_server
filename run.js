@@ -1,25 +1,29 @@
-import { execute } from "./src/utils/utils.js"
+import { execute, runListCommands } from "./src/utils/utils.js"
+import encodeHash from "./src/utils/code-parser.js"
+import preCommands from "./src/contants/db-templates.js"
 import express from "express"
+import bodyParser from "body-parser"
 const app = express()
 const port = 3000
 
-app.route("/")
-    .get((req, res) => {
-        res.json({name: "vinicius"})
-    })
+//* setup db tables and rules
+runListCommands(preCommands)
 
-app.route("/user/:id")
+app.use(bodyParser.json())
+
+app.route("/notification/:email")
     .get((req, res) => {
-        console.log('Time:', Date.now())
+        const code = encodeHash(req.params.email)
+        res.json({ message: "success", content : {code: code}})
     })
     .post((req, res) => {
-        res.send("")
+        res.json({ message: "success" })
     })
-    .put((req, res) => {
-
+    .put((req, res) =>{
+        res.json({ message: "success", content: {}})
     })
     .delete((req, res) => {
-        res.send("")
+        res.json({ message: "success", content: {}})
     })
 
 app.listen(port, () => {

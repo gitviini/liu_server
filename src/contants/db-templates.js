@@ -1,13 +1,22 @@
 import sql from "../services/db.js"
 
-const userModel = sql`CREATE TABLE IF NOT EXISTS "users" (
+/* const userModel = sql`CREATE TABLE IF NOT EXISTS "users" (
     id serial,
     name varchar(20) not null,
     email text not null,
     password text not null,
     code varchar(16),
     created_at timestamp with time zone null default CURRENT_TIMESTAMP
-);`
+);` */
+
+/* const temporaryUserModel = sql`CREATE TEMPORARY TABLE IF NOT EXISTS "temporaryUsers" (
+    id serial,
+    name varchar(20) not null,
+    email text not null,
+    password text not null,
+    code varchar(16),
+    created_at timestamp with time zone null default CURRENT_TIMESTAMP
+);` */
 
 const notificationModel = sql`CREATE TABLE IF NOT EXISTS "notification" (
     id serial,
@@ -17,7 +26,7 @@ const notificationModel = sql`CREATE TABLE IF NOT EXISTS "notification" (
     time time,
     occurred boolean not null default false,
     created_at timestamp with time zone null default CURRENT_TIMESTAMP,
-    authorId int not null
+    authorCode text not null
 );`
 
-export {userModel, notificationModel}
+export default [notificationModel]

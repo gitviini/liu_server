@@ -7,4 +7,10 @@ async function execute(sql){
     }
 }
 
-export {execute}
+async function runListCommands(listCommands){
+    listCommands.forEach(command => {
+        execute(command)
+    });
+}
+
+export {execute, runListCommands}

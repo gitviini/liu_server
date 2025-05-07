@@ -2,6 +2,8 @@ import sql from "../services/db.js"
 
 const userModel = sql`CREATE TABLE IF NOT EXISTS "users" (
     id serial,
+    name varchar(20) not null,
+    email text not null unique,
     code text not null unique,
     password text not null,
     created_at timestamp with time zone null default CURRENT_TIMESTAMP

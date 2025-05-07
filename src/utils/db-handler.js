@@ -2,8 +2,7 @@ import sql from "../services/db.js";
 import { execute } from "./utils.js";
 
 async function getNotifications(authorCode = "") {
-    const {data, error} = await execute(sql`SELECT * FROM "notification" WHERE author_code = ${authorCode};`)
-    return {data, error}
+    return await execute(sql`SELECT * FROM "notification" WHERE author_code = ${authorCode}`)
 }
 
 async function postNotification(
@@ -13,13 +12,40 @@ async function postNotification(
         date: String,
         time: String,
         occurred: Boolean,
-        authorCode: String,
+        author_code: String,
     }) {
 
-    const {data, error} = await execute(sql`INSERT INTO IF NOT EXISTS "notification"
+    return await execute(sql`INSERT INTO "notification"
         ${sql(notificationData, "title", "description", "date", "time", "occurred", "author_code")}
         `)
-    return {data, error}
 }
 
-export {getNotifications, postNotification}
+async function uploadNotification(
+    notificationData = {
+        id: String,
+        title: String,
+        description: String,
+        date: String,
+        time: String,
+        occurred: Boolean,
+        author_code: String,
+    }) {
+
+    return await execute(sql`UPDATE`)
+}
+
+async function deleteNotification(
+    notificationData = {
+        id: Number,
+        author_code: String
+    }) {
+
+    return await execute(sql`
+        DELETE FROM "notification"
+        WHERE id = ${notificationData.id}
+        and author_code = ${notificationData.author_code}
+        RETURNING id, author_code
+        `)
+}
+
+export { getNotifications, postNotification, uploadNotification, deleteNotification }

@@ -1,9 +1,15 @@
 async function execute(sql){
+    const data = {message: "", content: {}}, error = {message: "", content: {}}
     try{
-        const result = await sql
+        const response = await sql
+        data.content["data"] = response
     }
-    catch(error){
-        console.log(error.message)
+    catch(e){
+        error.message = e.message
+        error.content["error"] = e
+    }
+    finally {
+        return {data, error}
     }
 }
 

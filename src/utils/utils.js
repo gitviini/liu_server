@@ -1,22 +1,31 @@
-async function execute(sql){
-    const data = {message: "", content: {}}, error = {message: "", content: {}}
-    try{
+async function execute(sql) {
+    const data = { message: "", code: 200, content: {} }, error = { message: "", code: 500, content: {} }
+    try {
         const response = await sql
-        data.content["data"] = response
+        data.message = response.message
+        data.content = response
     }
-    catch(e){
+    catch (e) {
         error.message = e.message
-        error.content["error"] = e
+        error.code = e.code
+        error.content = e
     }
     finally {
-        return {data, error}
+        return { data, error }
     }
 }
 
-async function runListCommands(listCommands){
-    listCommands.forEach(command => {
-        execute(command)
+async function runListCommands(listCommands) {
+    listCommands.forEach(async command => {
+        const { data, error } = await execute(command)
+        
+        if(error.message){
+            console.log(error)
+            return
+        }
+
+        console.log(data)
     });
 }
 
-export {execute, runListCommands}
+export { execute, runListCommands }

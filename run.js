@@ -1,5 +1,5 @@
 import { runListCommands } from "./src/utils/utils.js"
-import * as handlerDataBase from "./src/utils/db-handler.js"
+import * as handlerDataBase from "./src/utils/db-notification-handler.js"
 import encodeHash from "./src/utils/code-parser.js"
 import preCommands from "./src/contants/db-templates.js"
 import express from "express"
@@ -21,7 +21,9 @@ app.route("/user/:code")
 
     })
     .post((req, res) => {
+        const code = req.params.code
 
+        
     })
     .put((req, res) => {
 
@@ -36,15 +38,14 @@ app.route("/notification/:code")
         const code = encodeHash(req.params.code)
 
         const { data, error } = await handlerDataBase.getNotifications(code)
-        console.log(data)
-        let response = { message: data.message, code: 200, content: { data: data.content.data } }
+        
+        let response = { message: data.message, code: 200, content: { data: data.content } }
         if (error.message) {
-            response = { message: error.message, code: 500, content: { data: error } }
+            response = { message: error.message, code: 500, content: { data: error.content } }
         }
         res.json(response)
     })
     .post(async (req, res) => {
-
         /* {
             "title": "oi",
             "description": "foda",
@@ -53,43 +54,47 @@ app.route("/notification/:code")
             "occurred": false,
             "author_code": ""
         } */
-
-        const date = new Date()
         const code = encodeHash(req.params.code)
         const notificationData = req.body
-        notificationData.time = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
         notificationData.author_code = code
         console.log(notificationData)
 
         const { data, error } = await handlerDataBase.postNotification(notificationData)
 
-        let response = { message: data.message, code: 200, content: { code: code, data: data.content.data } }
+        let response = { message: data.message, code: 200, content: { data: data.content } }
         if (error.message) {
-            response = { message: error.message, code: 500, content: { data: error } }
+            response = { message: error.message, code: 500, content: { data: error.content } }
         }
         res.json(response)
     })
-    .put((req, res) => {
-        res.json({ message: "success", content: {} })
+    .put(async (req, res) => {
+        const notificationData = req.body
+        
+        const {data, error} = await handlerDataBase.uploadNotification(notificationData)
+
+        let response = { message: data.message, code: 200, content: { data: data.content } }
+        if (error.message) {
+            response = { message: error.message, code: 500, content: { data: error.content } }
+        }
+        res.json(response)
     })
     .delete(async (req, res) => {
-
         /* {
             "id": ""
             "author_code": ""
         } */
-        
+
         const code = encodeHash(req.params.code)
         const notificationData = req.body
 
         const { data, error } = await handlerDataBase.deleteNotification(notificationData)
-        let response = { message: data.message, code: 200, content: { code: code, data: data.content.data } }
+        let response = { message: data.message, code: 200, content: { data: data.content } }
         if (error.message) {
-            response = { message: error.message, code: 500, content: { data: error } }
+            response = { message: error.message, code: 500, content: { data: error.content } }
         }
         res.json(response)
     })
 
 app.listen(port, () => {
-    console.log(`\x1b[35m App is run:\x1b[m http://localhost:${port}\n`)
+    console.log(`\x1b[35m App is run:\x1b[m \x1b[4mhttp://localhost:${port}\x1b[m\n`)
 })

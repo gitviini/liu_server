@@ -17,6 +17,7 @@ async function postNotification(
 
     return await execute(sql`INSERT INTO "notification"
         ${sql(notificationData, "title", "description", "date", "time", "occurred", "author_code")}
+        RETURNING title, description, date, time, occurred
         `)
 }
 
@@ -28,10 +29,14 @@ async function uploadNotification(
         date: String,
         time: String,
         occurred: Boolean,
-        author_code: String,
     }) {
 
-    return await execute(sql`UPDATE`)
+    return await execute(sql`
+        UPDATE "notification"
+        SET ${sql(notificationData, "title", "description", "date", "time", "occurred")}
+        WHERE id = ${notificationData.id}
+        RETURNING title, description, date, time, occurred
+        `)
 }
 
 async function deleteNotification(

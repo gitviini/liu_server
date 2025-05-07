@@ -1,15 +1,16 @@
 import sql from "../services/db.js"
 
-const userModel = sql`CREATE TABLE IF NOT EXISTS "users" (
+const userModel = sql`
+CREATE TABLE IF NOT EXISTS "users" (
     id serial,
-    name varchar(20) not null,
-    email text not null unique,
+    type text not null,
     code text not null unique,
-    password text not null,
-    created_at timestamp with time zone null default CURRENT_TIMESTAMP
+    code_connected text,
+    created_at timestamp default CURRENT_TIMESTAMP
 );`
 
-const notificationModel = sql`CREATE TABLE IF NOT EXISTS "notification" (
+const notificationModel = sql`
+CREATE TABLE IF NOT EXISTS "notification" (
     id serial,
     title varchar(20) not null,
     description text,

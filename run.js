@@ -1,5 +1,6 @@
 import { runListCommands } from "./src/utils/utils.js"
-import * as handlerDataBase from "./src/utils/db-notification-handler.js"
+import * as handlerDbNotification from "./src/utils/db-notification-handler.js"
+import * as handlerDbUser from "./src/utils/db-users-handler.js"
 import encodeHash from "./src/utils/code-parser.js"
 import preCommands from "./src/contants/db-templates.js"
 import express from "express"
@@ -17,19 +18,50 @@ app.use(bodyParser.json())
 
 // crud user by email/code
 app.route("/user/:code")
-    .get((req, res) => {
+    .get(async (req, res) => {
+        const code = encodeHash(req.params.code)
 
+        const { data, error } = await handlerDbUser.getUser({ code: code })
+
+        let response = { message: data.message, code: 200, content: { data: data.content } }
+        if (error.message) {
+            response = { message: error.message, code: 500, content: { data: error.content } }
+        }
+        res.json(response)
     })
-    .post((req, res) => {
-        const code = req.params.code
+    .post(async (req, res) => {
+        const code = encodeHash(req.params.code)
+        const userData = req.body
+        userData.code = code
 
-        
+        const { data, error } = await handlerDbUser.postUser(userData)
+        let response = { message: data.message, code: 200, content: { data: data.content } }
+        if (error.message) {
+            response = { message: error.message, code: 500, content: { data: error.content } }
+        }
+        res.json(response)
     })
-    .put((req, res) => {
+    .put(async (req, res) => {
+        const code = encodeHash(req.params.code)
+        const userData = req.body
+        userData.code = code
 
+        const { data, error } = await handlerDbUser.updateUser(userData)
+        let response = { message: data.message, code: 200, content: { data: data.content } }
+        if (error.message) {
+            response = { message: error.message, code: 500, content: { data: error.content } }
+        }
+        res.json(response)
     })
-    .delete((req, res) => {
+    .delete(async (req, res) => {
+        const code = encodeHash(req.params.code)
 
+        const { data, error } = await handlerDbUser.deleteUser({code: code})
+        let response = { message: data.message, code: 200, content: { data: data.content } }
+        if (error.message) {
+            response = { message: error.message, code: 500, content: { data: error.content } }
+        }
+        res.json(response)
     })
 
 // crud notification
@@ -37,8 +69,8 @@ app.route("/notification/:code")
     .get(async (req, res) => {
         const code = encodeHash(req.params.code)
 
-        const { data, error } = await handlerDataBase.getNotifications(code)
-        
+        const { data, error } = await handlerDbNotification.getNotifications(code)
+
         let response = { message: data.message, code: 200, content: { data: data.content } }
         if (error.message) {
             response = { message: error.message, code: 500, content: { data: error.content } }
@@ -59,7 +91,7 @@ app.route("/notification/:code")
         notificationData.author_code = code
         console.log(notificationData)
 
-        const { data, error } = await handlerDataBase.postNotification(notificationData)
+        const { data, error } = await handlerDbNotification.postNotification(notificationData)
 
         let response = { message: data.message, code: 200, content: { data: data.content } }
         if (error.message) {
@@ -69,8 +101,8 @@ app.route("/notification/:code")
     })
     .put(async (req, res) => {
         const notificationData = req.body
-        
-        const {data, error} = await handlerDataBase.uploadNotification(notificationData)
+
+        const { data, error } = await handlerDbNotification.uploadNotification(notificationData)
 
         let response = { message: data.message, code: 200, content: { data: data.content } }
         if (error.message) {
@@ -87,7 +119,7 @@ app.route("/notification/:code")
         const code = encodeHash(req.params.code)
         const notificationData = req.body
 
-        const { data, error } = await handlerDataBase.deleteNotification(notificationData)
+        const { data, error } = await handlerDbNotification.deleteNotification(notificationData)
         let response = { message: data.message, code: 200, content: { data: data.content } }
         if (error.message) {
             response = { message: error.message, code: 500, content: { data: error.content } }

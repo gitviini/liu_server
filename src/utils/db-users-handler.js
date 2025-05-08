@@ -1,39 +1,42 @@
-import { execute } from "./utils";
-import sql from "../services/db";
+import { execute } from "./utils.js";
+import sql from "../services/db.js";
 
-async function getUsers(
+async function getUser(
     userData = {
         code: String
     }
-){
+) {
     return await execute(sql`
-        SELECT * FROM "users" WHERE code = ${userData.code}
+        SELECT * FROM "users"
+        WHERE code = ${userData.code}
         `)
 }
 
 async function postUser(
     userData = {
+        type: String,
         code: String,
         code_connected: String,
     }
-){
+) {
     return await execute(sql`
-        INSERT INTO "users" ${sql(userData, "code", "code_connected")}
+        INSERT INTO "users" ${sql(userData, "type", "code", "code_connected")}
         RETURNING code, code_connected
         `)
 }
 
 async function updateUser(
     userData = {
+        type: String,
         code: String,
         code_connected: String,
     }
-){
+) {
     return await execute(sql`
         UPDATE "users"
-        SET ${userData, "code_connected"}
+        SET ${sql(userData, "type", "code_connected")}
         WHERE code = ${userData.code}
-        RETURNING code, code_connected
+        RETURNING type, code, code_connected
         `)
 }
 
@@ -41,12 +44,12 @@ async function deleteUser(
     userData = {
         code: String
     }
-){
+) {
     return await execute(sql`
         DELETE FROM "users"
         WHERE code = ${userData.code}
-        RETURNING code, code_connected
+        RETURNING id, type, code, code_connected
         `)
 }
 
-export {getUsers, postUser, updateUser, deleteUser}
+export { getUser, postUser, updateUser, deleteUser }

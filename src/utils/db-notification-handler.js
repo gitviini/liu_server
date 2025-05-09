@@ -12,12 +12,13 @@ async function postNotification(
         date: String,
         time: String,
         occurred: Boolean,
+        type: String,
         author_code: String,
     }) {
 
     return await execute(sql`INSERT INTO "notification"
-        ${sql(notificationData, "title", "description", "date", "time", "occurred", "author_code")}
-        RETURNING title, description, date, time, occurred
+        ${sql(notificationData, "title", "description", "date", "time", "occurred", "author_code", "type")}
+        RETURNING title, description, date, time, occurred, type
         `)
 }
 

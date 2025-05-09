@@ -42,7 +42,7 @@ app.route("/user/:code")
         res.json(response)
     })
     .put(async (req, res) => {
-        const code = encodeHash(req.params.code)
+        const code = req.params.code
         const userData = req.body
         userData.code = code
 
@@ -54,9 +54,9 @@ app.route("/user/:code")
         res.json(response)
     })
     .delete(async (req, res) => {
-        const code = encodeHash(req.params.code)
+        const code = req.params.code
 
-        const { data, error } = await handlerDbUser.deleteUser({code: code})
+        const { data, error } = await handlerDbUser.deleteUser({ code: code })
         let response = { message: data.message, code: 200, content: { data: data.content } }
         if (error.message) {
             response = { message: error.message, code: 500, content: { data: error.content } }
@@ -78,13 +78,15 @@ app.route("/notification/:code")
         res.json(response)
     })
     .post(async (req, res) => {
-        /* {
-            "title": "oi",
-            "description": "foda",
-            "date": "2020",
-            "time": "22",
-            "occurred": false,
-            "author_code": ""
+        /* 
+        notificationData = {
+            title: String,
+            description: String,
+            date: String,
+            time: String,
+            occurred: Boolean,
+            type: String,
+            author_code: String,
         } */
         const code = encodeHash(req.params.code)
         const notificationData = req.body
@@ -92,6 +94,8 @@ app.route("/notification/:code")
         console.log(notificationData)
 
         const { data, error } = await handlerDbNotification.postNotification(notificationData)
+
+        console.log(error)
 
         let response = { message: data.message, code: 200, content: { data: data.content } }
         if (error.message) {

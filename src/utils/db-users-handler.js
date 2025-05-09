@@ -1,6 +1,17 @@
 import { execute } from "./utils.js";
 import sql from "../services/db.js";
 
+async function getUserByCep(
+    userData = {
+        neighborhood: String
+    }
+) {
+    return await execute(sql`
+        SELECT * FROM "users"
+        WHERE neighborhood = ${userData.cep}
+        `)
+}
+
 async function getUser(
     userData = {
         code: String
@@ -17,11 +28,14 @@ async function postUser(
         type: String,
         code: String,
         code_connected: String,
+        cep: String,
+        dcnt: String,
+        neighborhood: String
     }
 ) {
     return await execute(sql`
-        INSERT INTO "users" ${sql(userData, "type", "code", "code_connected")}
-        RETURNING code, code_connected
+        INSERT INTO "users" ${sql(userData, "type", "code", "code_connected", "cep", "dcnt", "neighborhood")}
+        RETURNING code, code_connected, cep, dcnt, neighborhood
         `)
 }
 
@@ -30,13 +44,16 @@ async function updateUser(
         type: String,
         code: String,
         code_connected: String,
+        cep: String,
+        dcnt: String,
+        neighborhood: String,
     }
 ) {
     return await execute(sql`
         UPDATE "users"
-        SET ${sql(userData, "type", "code_connected")}
+        SET ${sql(userData, "type", "code_connected", "cep", "dcnt", "neighborhood")}
         WHERE code = ${userData.code}
-        RETURNING type, code, code_connected
+        RETURNING type, code, code_connected, cep, dcnt, neighborhood
         `)
 }
 
@@ -48,8 +65,8 @@ async function deleteUser(
     return await execute(sql`
         DELETE FROM "users"
         WHERE code = ${userData.code}
-        RETURNING id, type, code, code_connected
+        RETURNING id, type, code, code_connected, cep, dcnt, neighborhood
         `)
 }
 
-export { getUser, postUser, updateUser, deleteUser }
+export { getUserByCep, getUser, postUser, updateUser, deleteUser }

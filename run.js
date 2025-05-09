@@ -42,7 +42,7 @@ app.route("/user/:code")
         res.json(response)
     })
     .put(async (req, res) => {
-        const code = encodeHash(req.params.code)
+        const code = req.params.code
         const userData = req.body
         userData.code = code
 
@@ -54,7 +54,7 @@ app.route("/user/:code")
         res.json(response)
     })
     .delete(async (req, res) => {
-        const code = encodeHash(req.params.code)
+        const code = req.params.code
 
         const { data, error } = await handlerDbUser.deleteUser({code: code})
         let response = { message: data.message, code: 200, content: { data: data.content } }

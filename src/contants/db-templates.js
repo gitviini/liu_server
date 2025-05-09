@@ -25,7 +25,8 @@ CREATE TABLE IF NOT EXISTS "notification" (
     priority varchar(20) not null default 'Toque de Bem-estar'::text,
     occurred boolean not null default false,
     created_at timestamp with time zone null default CURRENT_TIMESTAMP,
-    authorCode text not null
+    author_code text not null,
+    constraint notification_pkey primary key (id)
 );`
 
 export default [userModel, notificationModel]

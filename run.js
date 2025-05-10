@@ -16,10 +16,22 @@ runListCommands(preCommands)
 app.use(morgan("tiny"))
 app.use(bodyParser.json())
 
+app.get("/users/", async (req, res) => {
+	const userData = req.body
+
+	const {data, error} = await handlerDbUser.getUserByNeighborhood(userData)
+
+	let response = { message: data.message, code: 200, content: { data: data.content } }
+	if (error.message) {
+		response = { message: error.message, code: 500, content: { data: error.content } }
+	}
+	res.json(response)
+})
+
 // crud user by email/code
 app.route("/user/:code")
     .get(async (req, res) => {
-        const code = encodeHash(req.params.code)
+        const code = (req.params.code.includes("@") ? encodeHash(req.params.code) : req.params.code)
 
         const { data, error } = await handlerDbUser.getUser({ code: code })
 

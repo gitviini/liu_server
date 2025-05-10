@@ -1,14 +1,14 @@
 import { execute } from "./utils.js";
 import sql from "../services/db.js";
 
-async function getUserByCep(
+async function getUserByNeighborhood(
     userData = {
         neighborhood: String
     }
 ) {
     return await execute(sql`
         SELECT * FROM "users"
-        WHERE neighborhood = ${userData.cep}
+        WHERE neighborhood = ${userData.neighborhood} and type = 'Paciente'
         `)
 }
 
@@ -69,4 +69,4 @@ async function deleteUser(
         `)
 }
 
-export { getUserByCep, getUser, postUser, updateUser, deleteUser }
+export { getUserByNeighborhood, getUser, postUser, updateUser, deleteUser }

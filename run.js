@@ -19,6 +19,8 @@ app.use(bodyParser.json())
 app.get("/users/", async (req, res) => {
 	const userData = req.body
 
+    console.log(userData)
+
 	const {data, error} = await handlerDbUser.getUserByNeighborhood(userData)
 
 	let response = { message: data.message, code: 200, content: { data: data.content } }

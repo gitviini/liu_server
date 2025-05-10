@@ -83,7 +83,7 @@ app.route("/user/:code")
 // crud notification
 app.route("/notification/:code")
     .get(async (req, res) => {
-        const code = encodeHash(req.params.code)
+        const code = (req.params.code.includes("@") ? encodeHash(req.params.code) : req.params.code)
 
         const { data, error } = await handlerDbNotification.getNotifications(code)
 
@@ -104,7 +104,7 @@ app.route("/notification/:code")
             type: String,
             author_code: String,
         } */
-        const code = encodeHash(req.params.code)
+            const code = (req.params.code.includes("@") ? encodeHash(req.params.code) : req.params.code)
         const notificationData = req.body
         notificationData.author_code = code
         console.log(notificationData)

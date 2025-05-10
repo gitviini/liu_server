@@ -16,12 +16,12 @@ runListCommands(preCommands)
 app.use(morgan("tiny"))
 app.use(bodyParser.json())
 
-app.get("/users/", async (req, res) => {
-	const userData = req.body
+app.get("/users/:neighborhood", async (req, res) => {
+	const userData = req.params.neighborhood
 
     console.log(userData)
 
-	const {data, error} = await handlerDbUser.getUserByNeighborhood(userData)
+	const {data, error} = await handlerDbUser.getUserByNeighborhood({userData})
 
 	let response = { message: data.message, code: 200, content: { data: data.content } }
 	if (error.message) {
